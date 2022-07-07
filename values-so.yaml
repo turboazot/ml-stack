@@ -1,0 +1,5 @@
+rbac:
+  create: true
+sparkJobNamespace: 'spark-apps'
+webhook:
+  enable: true

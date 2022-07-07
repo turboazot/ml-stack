@@ -1,0 +1,23 @@
+FROM mrdziuban/scala-sbt-jdk:scala-2.11.12-sbt-1.1.1
+
+RUN apk update && apk add -y procps
+
+RUN mkdir /opt
+
+RUN curl https://archive.apache.org/dist/spark/spark-2.4.8/spark-2.4.8-bin-hadoop2.6.tgz -o /opt/spark-2.4.8-bin-hadoop2.6.tgz \
+ && tar -xf /opt/spark-2.4.8-bin-hadoop2.6.tgz -C /opt \
+ && mv /opt/spark-2.4.8-bin-hadoop2.6 /opt/spark \
+ && rm -rf /opt/spark-2.4.8-bin-hadoop2.6.tgz
+
+ENV SPARK_HOME=/opt/spark
+
+RUN curl -k https://dlcdn.apache.org/incubator/livy/0.7.1-incubating/apache-livy-0.7.1-incubating-bin.zip -o /opt/apache-livy-0.7.1-incubating-bin.zip \
+ && unzip /opt/apache-livy-0.7.1-incubating-bin.zip -d /opt \
+ && mv /opt/apache-livy-0.7.1-incubating-bin /opt/livy \
+ && rm -rf /opt/apache-livy-0.7.1-incubating-bin.zip \
+ && mkdir /opt/livy/logs \
+ && cp /opt/livy/conf/livy.conf.template /opt/livy/conf/livy.conf
+
+COPY entrypoint.sh .
+
+ENTRYPOINT ["/entrypoint.sh"]

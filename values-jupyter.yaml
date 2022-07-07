@@ -1,0 +1,13 @@
+proxy: 
+  service:
+    type: ClusterIP
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - jupyterhub.ds-pet.xyz
+singleuser:
+  image:
+    name: turboazot/jupyter-single
+    tag: "0.0.2"

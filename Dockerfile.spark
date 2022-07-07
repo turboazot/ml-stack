@@ -1,0 +1,41 @@
+FROM gcr.io/spark-operator/spark:v2.4.5
+
+RUN apt update --allow-releaseinfo-change && apt install -y unzip curl
+
+RUN curl -k https://dlcdn.apache.org/incubator/livy/0.7.1-incubating/apache-livy-0.7.1-incubating-bin.zip -o /opt/apache-livy-0.7.1-incubating-bin.zip \
+ && unzip /opt/apache-livy-0.7.1-incubating-bin.zip -d /opt \
+ && mv /opt/apache-livy-0.7.1-incubating-bin /opt/livy \
+ && rm -rf /opt/apache-livy-0.7.1-incubating-bin.zip \
+ && mkdir /opt/livy/logs \
+ && cp /opt/livy/conf/livy.conf.template /opt/livy/conf/livy.conf
+
+RUN curl -fL https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz | gzip -d > /usr/local/bin/cs \
+ && chmod +x /usr/local/bin/cs \
+ && /usr/local/bin/cs setup --yes \
+ && cs install scala:2.11.12 && cs install scalac:2.11.12 \
+ && echo export PATH=$PATH:/root/.local/share/coursier/bin >> ~/.bashrc
+
+RUN curl https://archive.apache.org/dist/spark/spark-2.4.5/pyspark-2.4.5.tar.gz -o /tmp/pyspark-2.4.5.tar.gz \
+ && tar -xf /tmp/pyspark-2.4.5.tar.gz -C /opt/spark \
+ && mv /opt/spark/pyspark-2.4.5 /opt/spark/python \
+ && rm /tmp/pyspark-2.4.5.tar.gz
+
+RUN apt install -y python3 && ln -s /usr/bin/python3 /usr/bin/python
+
+
+# ENV SCALA_VERSION=2.11.12 \
+#     SCALA_HOME=/usr/share/scala
+
+# # NOTE: bash is used by scala/scalac scripts, and it cannot be easily replaced with ash.
+# RUN apk add --no-cache --virtual=.build-dependencies wget ca-certificates && \
+#     apk add --no-cache bash curl jq && \
+#     cd "/tmp" && \
+#     wget --no-verbose "https://downloads.typesafe.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz" && \
+#     tar xzf "scala-${SCALA_VERSION}.tgz" && \
+#     mkdir "${SCALA_HOME}" && \
+#     rm "/tmp/scala-${SCALA_VERSION}/bin/"*.bat && \
+#     mv "/tmp/scala-${SCALA_VERSION}/bin" "/tmp/scala-${SCALA_VERSION}/lib" "${SCALA_HOME}" && \
+#     ln -s "${SCALA_HOME}/bin/"* "/usr/bin/" && \
+#     apk del .build-dependencies && \
+#     rm -rf "/tmp/"* \
+#     touch ${JAVA_HOME}/release

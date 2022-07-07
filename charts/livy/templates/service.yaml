@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "livy.fullname" . }}
+  labels:
+    {{- include "livy.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - name: "10000"
+      port: 10000
+      protocol: TCP
+      targetPort: 10000
+    - name: "10001"
+      port: 10001
+      protocol: TCP
+      targetPort: 10001
+    - name: "10002"
+      port: 10002
+      protocol: TCP
+      targetPort: 10002
+    - name: "10003"
+      port: 10003
+      protocol: TCP
+      targetPort: 10003
+    - name: "10004"
+      port: 10004
+      protocol: TCP
+      targetPort: 10004
+    - name: "10005"
+      port: 10005
+      protocol: TCP
+      targetPort: 10005
+    - name: "10006"
+      port: 10006
+      protocol: TCP
+      targetPort: 10006
+    - name: "10007"
+      port: 10007
+      protocol: TCP
+      targetPort: 10007
+    - name: "10008"
+      port: 10008
+      protocol: TCP
+      targetPort: 10008
+    - name: "10009"
+      port: 10009
+      protocol: TCP
+      targetPort: 10009
+    - name: "10010"
+      port: 10010
+      protocol: TCP
+      targetPort: 10010
+  selector:
+    {{- include "livy.selectorLabels" . | nindent 4 }}
